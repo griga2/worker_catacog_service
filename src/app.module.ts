@@ -19,7 +19,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       username: 'SpravServ',
       password: 'Cghfdjxybr24',
       database: 'SpravApp',
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      autoLoadEntities: true,
+      // entities: [__dirname + '/**/*.entity{.ts,.js}'],
       extra: {
         trustServerCertificate: true,
       }
