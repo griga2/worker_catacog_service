@@ -17,4 +17,9 @@ export class Departments {
     @Column({ name: 'FatherID',})
     father_id: string;
 
+    @Column({ name: 'WorkingDays',})
+    working_days: string;
+
+    @Column({ name: 'OpeningHours',})
+    opening_hours: string;
   }

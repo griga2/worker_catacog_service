@@ -3,11 +3,11 @@ import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import { Empoyer } from './schame/empoyer.schame';
 import { Branch } from './schame/branch.schame';
-import { Users } from './entity/Users.entity';
+import { Users } from '../entity/Users.entity';
 import { DataSource, Repository } from 'typeorm';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
-import { Roles } from './entity/Roles.entity';
-import { Departments } from './entity/Departments.entity';
+import { Roles } from '../entity/Roles.entity';
+import { Departments } from '../entity/Departments.entity';
 import { retry } from 'rxjs';
 
 @Injectable()
