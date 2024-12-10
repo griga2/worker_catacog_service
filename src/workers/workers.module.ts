@@ -5,16 +5,18 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { EmpoyerSchema } from './schame/empoyer.schame';
 import { BranchSchema } from './schame/branch.schame';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Users } from '../entity/Users.entity';
-import { Roles } from '../entity/Roles.entity';
-import { Departments } from '../entity/Departments.entity';
+import { User } from '../entity/Users.entity';
+import { Role } from '../entity/Roles.entity';
+import { Department } from '../entity/Departments.entity';
+import { Contact } from 'src/entity/Contacts.entity';
 
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Users]),
-    TypeOrmModule.forFeature([Roles]),
-    TypeOrmModule.forFeature([Departments]),
+    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([Role]),
+    TypeOrmModule.forFeature([Department]),
+    TypeOrmModule.forFeature([Contact]),
   ],
   providers: [WorkersService],
   controllers: [WorkersController],

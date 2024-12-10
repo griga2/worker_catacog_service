@@ -3,23 +3,23 @@ import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import { Empoyer } from './schame/empoyer.schame';
 import { Branch } from './schame/branch.schame';
-import { Users } from '../entity/Users.entity';
+import { User } from '../entity/Users.entity';
 import { DataSource, Repository } from 'typeorm';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
-import { Roles } from '../entity/Roles.entity';
-import { Departments } from '../entity/Departments.entity';
+import { Role } from '../entity/Roles.entity';
+import { Department } from '../entity/Departments.entity';
 import { retry } from 'rxjs';
 
 @Injectable()
 export class WorkersService {
 
     constructor(
-        @InjectRepository(Users)
-        private usersRepository: Repository<Users>,
-        @InjectRepository(Roles)
-        private rolesRepository: Repository<Roles>,
-        @InjectRepository(Departments)
-        private departmensRepository: Repository<Departments>,
+        @InjectRepository(User)
+        private usersRepository: Repository<User>,
+        @InjectRepository(Role)
+        private rolesRepository: Repository<Role>,
+        @InjectRepository(Department)
+        private departmensRepository: Repository<Department>,
         @InjectDataSource() private dataSource: DataSource,
     ) {
        
@@ -73,7 +73,7 @@ export class WorkersService {
             id: el.id,
             name: el.name,
             chief_id: el.chief_id,
-            adress: el.adress,
+            adress: el.address,
             father_id: el.father_id,
             is_open: true,  
             children:[],
@@ -103,6 +103,11 @@ export class WorkersService {
             metka = finish_child.some(el => finish_child.filter(els => els.id == el.father_id).length > 0);
         }
         return finish_child;
+    }
+
+    async updateBranch(branchId:string, body) {
+        await this.departmensRepository.update(branchId,{...body});
+        return ""
     }
 }   
 

@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Put, Query } from '@nestjs/common';
 import { UploadBodyDto } from './dto/workers.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -24,5 +24,10 @@ export class WorkersController {
     @Get('/branches')
     async getBranches() {
         return await this.workerService.getBranches();
+    }
+
+    @Put('/branches')
+    async putBranches(@Body() body, @Query('branchId') branchId: string) {
+        return await this.workerService.updateBranch(branchId, body);
     }
 }

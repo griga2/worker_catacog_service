@@ -1,7 +1,9 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Role } from './Roles.entity';
+import { Contact } from './Contacts.entity';
 
-@Entity('Users') //This maps the notes entity to the 'notes' table in your DB
-export class Users {
+@Entity('Employees') //This maps the notes entity to the 'notes' table in your DB
+export class User {
     @PrimaryGeneratedColumn('uuid')
     ID: string;
   
@@ -14,15 +16,9 @@ export class Users {
     @Column({ name: 'MidName',})
     second_name: string;
 
-    @Column({ name: 'Email',})
-    mail: string;
-
     @Column({ name: 'Birthday',})
     birthday: string;
-
-    @Column({ name: 'Phone',})
-    phone: string;
-
+    
     @Column({ name: 'post',})
     post: string;
 
@@ -35,6 +31,11 @@ export class Users {
     @Column({ name: 'Photo',})
     photo: string;
 
-    @Column({ name: 'RoleID',})
+    @OneToOne(() => Role)
+    @JoinColumn({name:"Contacts"})
     role: string;
+
+    @OneToMany(() => Contact, (contact) => contact.employeeID, {eager: true,})
+    contacts: Contact[];
+
   }
