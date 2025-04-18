@@ -1,5 +1,5 @@
 # stage1 as builder
-FROM node:22-alpine as builder
+FROM node:23-alpine as builder
 # Copy the package.json and install dependencies
 WORKDIR /app
 
@@ -9,7 +9,7 @@ COPY . .
 RUN npm run build
 RUN npm prune --production
 
-FROM node:22-alpine 
+FROM node:23-alpine 
 WORKDIR /app
 
 COPY --from=builder /app/node_modules ./node_modules

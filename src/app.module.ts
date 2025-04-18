@@ -16,7 +16,7 @@ import { AuthModule } from './auth/auth.module';
     }),
     TypeOrmModule.forRoot({
       type: 'mssql',
-      host: 'NSK-UK-1C-N',
+      host: '10.0.2.62',
       port:1433,
       username: 'SpravServ',
       password: 'Cghfdjxybr24',
