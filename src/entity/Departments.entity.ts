@@ -1,52 +1,86 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Employer } from './Employers.entity';
 
 @Entity('Departments') //This maps the notes entity to the 'notes' table in your DB
 export class Department {
     @PrimaryGeneratedColumn({name:'ID'})
-    id: string;
+    id?: string;
   
     @Column({ name: 'Name',})
-    name: string;
-  
+    name?: string;
+
     @Column({ name: 'ChiefID',})
-    chief_id: string;
+    chief_id?: string;
 
     @Column({ name: 'Address',})
-    address: string;
+    address?: string;
 
     @Column({ name: 'FatherID',})
-    father_id: string;
+    father_id?: string;
 
-    @Column({ name: 'WorkingDays',})
-    working_days: string;
-
-    @Column({ name: 'OpeningHours',})
-    opening_hours: string;
-
-    @Column({ name: 'OpeningHours',})
-    MonFriday: boolean;
+    @Column({ name: 'MonFriday',})
+    monFriday?: boolean;
 
     @Column({ name: 'Saturday',})
-    Saturday: boolean;
+    saturday?: boolean;
 
     @Column({ name: 'Sunday',})
-    Sunday: boolean;
+    sunday?: boolean;
 
-    @Column({ name: 'OpeningHours',})
-    MonFidayOpenning: boolean;
+    @Column({ name: 'MonFidayOpenning',})
+    monFridayOpenning?: Date;
 
-    @Column({ name: 'Saturday',})
-    MonFridayClosing: boolean;
+    @Column({ name: 'MonFridayClosing',})
+    monFridayClosing?: Date;
 
-    @Column({ name: 'Sunday',})
-    SaturdayOpenning: boolean;
+    @Column({ name: 'SaturdayOpenning',})
+    saturdayOpenning?: Date;
 
-    @Column({ name: 'OpeningHours',})
-    SaturdayClosing: boolean;
+    @Column({ name: 'SaturdayClosing',})
+    saturdayClosing?: Date;
 
-    @Column({ name: 'Saturday',})
-    SundayOpenning: boolean;
+    @Column({ name: 'SundayOpenning',})
+    sundayOpenning?: Date;
 
-    @Column({ name: 'Sunday',})
-    SundayClosing: boolean;
-  }
+    @Column({ name: 'SundayClosing',})
+    sundayClosing?: Date;
+
+    @Column({name: "OrderNum",})
+    orderNum?: string;
+
+    @Column({name: "TimeOffset",})
+    timeOffset?: string;
+
+    @Column({name: "Email",})
+    email?: string;
+
+    @Column({name: "Time_Ping",})
+    time_ping?: number;
+
+    @Column({name: "City",})
+    сity?: string;
+
+    @Column({name: "CFO_Vest",})
+    cfo_vest?: string;
+
+    @Column({name: "SQL_SERVER_Vesta",})
+    sql_server_vesta?: string;
+
+    @Column({name: "Database_Vesta",})
+    database_vesta?: string;
+
+    @Column({name: "ID_Vesta",})
+    id_vesta?: string;
+
+    @Column({name: "OID",})
+    oid?: string;
+
+    @Column({name: "isOfficeDepartment",})
+    isOfficeDepartment?: number;
+
+    @Column({name: "isOfficePurchase",})
+    isOfficePurchase?: number;
+    
+    @Column({name: "isStorage",})
+    isStorage?: number;
+}

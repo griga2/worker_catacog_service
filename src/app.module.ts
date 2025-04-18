@@ -5,6 +5,8 @@ import { WorkersModule } from './workers/workers.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ScriptsModule } from './scripts/scripts.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -25,6 +27,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         trustServerCertificate: true,
       }
     }),
+    ScriptsModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

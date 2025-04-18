@@ -1,18 +1,20 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { User } from './Users.entity';
+import { Employer } from './Employers.entity';
 
-@Entity('Roles') //This maps the notes entity to the 'notes' table in your DB
+@Entity('Contacts') //This maps the notes entity to the 'notes' table in your DB
 export class Contact {
-    @PrimaryGeneratedColumn('uuid')
-    ID: string;
+    @PrimaryGeneratedColumn('uuid',{name: 'ID'})
+    ID?: string;
   
-    @ManyToOne(() => User, (user) => user.contacts, )
-    employeeID: User;
-  
-    @Column({ name: 'Name',})
-    type: string;
+    @Column({ name: 'Type',})
+    Type: string;
 
-    @Column({ name: 'Name',})
-    name: string;
+    @Column({ name: 'Value',})
+    Value: string;
 
+    @Column({name: 'IsMain'})
+    IsMain?: boolean;
+
+    @Column({name:'EmployeeID'})
+    EmployeeID: string;
   }
