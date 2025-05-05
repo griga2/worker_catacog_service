@@ -53,6 +53,7 @@ export class WorkersService {
     }
 
     async getEmployers(company) {
+        console.log('awd')
         const rez =  (await this.dataSource.query(`
                 SELECT e.[ID]
                     ,e.[LastName]
@@ -71,8 +72,8 @@ export class WorkersService {
                     ,rl.[Id] AS RoleId
                     ,rl.[CanEditSprav] AS CanEditSprav
                     ,e.[BirthdayString]
-                    ,(SELECT convert(nvarchar(36), id) + ':' + type + ':' + value + ';' FROM [dbo].Contacts WHERE [EmployeeID] = e.ID ORDER BY [type] FOR XML PATH('')) AS Contacs
-                	,(SELECT convert(nvarchar(36), ID) + ':' + Name + ';' FROM [dbo].Roles WHERE [ID] = e.RoleID ORDER BY [type] FOR XML PATH('')) AS Roles
+                    ,(SELECT convert(nvarchar(36), id) + ':' + Type + ':' + Value + ';' FROM [dbo].Contacts WHERE [EmployeeID] = e.ID ORDER BY [Type] FOR XML PATH('')) AS Contacs
+                	,(SELECT convert(nvarchar(36), ID) + ':' + Name + ';' FROM [dbo].Roles WHERE [ID] = e.RoleID FOR XML PATH('')) AS Roles
                 FROM [dbo].[Employees] AS e
                 INNER JOIN EmpToDepIndex AS ed 
                     ON e.ID = ed.EmployeeID 
@@ -194,8 +195,8 @@ export class WorkersService {
                 ,d.[Name] AS DepartamentName
                 ,rl.[Name] AS RoleName
                 ,e.[BirthdayString]
-                ,(SELECT convert(nvarchar(36), id) + ':' + type + ':' + value + ';' FROM [dbo].Contacts WHERE [EmployeeID] = e.ID ORDER BY [type] FOR XML PATH('')) AS Contacs
-                ,(SELECT convert(nvarchar(36), rl.ID) + ':' + rl.Name + ';' FROM [dbo].Roles AS rl WHERE [ID] = e.RoleID ORDER BY [type] FOR XML PATH('')) AS Roles
+                ,(SELECT convert(nvarchar(36), id) + ':' + Type + ':' + value + ';' FROM [dbo].Contacts WHERE [EmployeeID] = e.ID ORDER BY [Type] FOR XML PATH('')) AS Contacs
+                ,(SELECT convert(nvarchar(36), rl.ID) + ':' + rl.Name + ';' FROM [dbo].Roles AS rl WHERE [ID] = e.RoleID FOR XML PATH('')) AS Roles
             FROM [dbo].[Employees] AS e
             INNER JOIN EmpToDepIndex AS ed 
                 ON e.ID = ed.EmployeeID 

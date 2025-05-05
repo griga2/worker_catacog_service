@@ -1,6 +1,4 @@
-# stage1 as builder
-FROM node:23-alpine as builder
-# Copy the package.json and install dependencies
+FROM node:23-alpine AS builder
 WORKDIR /app
 
 COPY package*.json ./

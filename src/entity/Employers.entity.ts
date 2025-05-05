@@ -44,6 +44,4 @@ export class Employer {
     @Column({ name: 'Login',})
     login?: string;
 
-    @Column({ name: 'Password',})
-    password?: string;
 }

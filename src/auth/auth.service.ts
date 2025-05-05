@@ -16,9 +16,9 @@ export class AuthService {
 
   async signIn(login: string, pass: string): Promise<any> {
     const user = await this.EmployersRepository.findOne({where:{login:login}})
-    if (user?.password !== pass) {
-      throw new UnauthorizedException();
-    }
+    // if (user?.password !== pass) {
+    //   throw new UnauthorizedException();
+    // }
     const payload = { userid: user.id };
     return {
       access_token: await this.jwtService.signAsync(payload),
