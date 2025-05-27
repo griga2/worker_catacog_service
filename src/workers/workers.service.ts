@@ -204,11 +204,13 @@ export class WorkersService {
                 ON d.ID = ed.DepartmentID	
             LEFT JOIN Roles As rl
                 ON rl.ID = e.RoleID
-            WHERE e.[Name] LIKE '${query}'
-			OR e.[MidName] LIKE '${query}'
-			OR e.[LastName] LIKE '${query}'
-			OR d.[Name] LIKE '${query}'
-			OR rl.[Name] LIKE '${query}'
+            WHERE 
+                 e.[Name] LIKE ('%${query}%')
+                OR e.[MidName] LIKE ('%${query}%')
+                OR e.[LastName] LIKE ('%${query}%')
+                OR e.[LastName] LIKE ('%${query}%')
+                OR  d.[Name] LIKE ('%${query}%')
+                OR rl.[Name] LIKE ('%${query}%')
             ORDER BY d.[Name], LastName
         `)).map(el => {
         return {
