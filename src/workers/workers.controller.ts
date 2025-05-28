@@ -18,8 +18,9 @@ export class WorkersController {
     }
 
     @Get('/search')
-    async getCatalog(@Query('text') company: string) {
-        return await this.workerService.searchEmployers(company);
+    async getCatalog(@Query('text') company: string, @Query('date') date: string) {
+        console.log(date)
+        return await this.workerService.searchEmployers(company, date);
     }
 
     @Get('/branches')

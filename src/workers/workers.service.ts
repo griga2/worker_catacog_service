@@ -177,7 +177,9 @@ export class WorkersService {
         })
     }
 
-    async searchEmployers(query: string) {
+    async searchEmployers(query: string, date: string) {
+        const dates = JSON.parse(date);
+        console.log(dates[0])
         console.log(query);
         const rez =  (await this.dataSource.query(`
             SELECT e.[ID]
@@ -205,12 +207,14 @@ export class WorkersService {
             LEFT JOIN Roles As rl
                 ON rl.ID = e.RoleID
             WHERE 
-                 e.[Name] LIKE ('%${query}%')
-                OR e.[MidName] LIKE ('%${query}%')
-                OR e.[LastName] LIKE ('%${query}%')
-                OR e.[LastName] LIKE ('%${query}%')
-                OR  d.[Name] LIKE ('%${query}%')
-                OR rl.[Name] LIKE ('%${query}%')
+                ( 
+                    e.[Name] LIKE ('%${query}%')
+                    OR e.[MidName] LIKE ('%${query}%')
+                    OR e.[LastName] LIKE ('%${query}%')
+                    OR e.[LastName] LIKE ('%${query}%')
+                    OR  d.[Name] LIKE ('%${query}%')
+                    OR rl.[Name] LIKE ('%${query}%')
+                ) AND FORMAT(e.[Birthday], 'MM-dd')  BETWEEN  FORMAT(CONVERT(datetime, '${dates[0]}'), 'MM-dd') AND  FORMAT(CONVERT(datetime, '${dates[1]}'), 'MM-dd')
             ORDER BY d.[Name], LastName
         `)).map(el => {
         return {
