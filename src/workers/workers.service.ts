@@ -86,7 +86,7 @@ export class WorkersService {
             `)).map(el => {
             return {
                 ...el,
-                full_name: el.Name + " " + el.MidName + " " + el.LastName,
+                full_name:   el.LastName + " " +  el.Name + " " + el.MidName ,
                 department_name: el.DepartamentName,
                 role: { 
                     name: el.RoleName,
@@ -178,9 +178,18 @@ export class WorkersService {
     }
 
     async searchEmployers(query: string, date: string) {
-        const dates = JSON.parse(date);
-        console.log(dates[0])
+        const dates = JSON.parse(date || null);
         console.log(query);
+        let  orderStr = "";
+        let  dateStr = "";
+        if (dates == null) {
+            orderStr = "ORDER BY d.[Name], e.LastName ";
+        } else {
+            console.log('awd')
+            orderStr = "ORDER BY MONTH(e.[Birthday]), DAY(e.[Birthday]);"
+            dateStr = `AND FORMAT(e.[Birthday], 'MM-dd')  BETWEEN  FORMAT(CONVERT(datetime, '${dates[0]}'), 'MM-dd') AND  FORMAT(CONVERT(datetime, '${dates[1]}'), 'MM-dd')`
+        }
+        
         const rez =  (await this.dataSource.query(`
             SELECT e.[ID]
                 ,e.[LastName]
@@ -204,7 +213,7 @@ export class WorkersService {
                 ON e.ID = ed.EmployeeID 
             INNER JOIN Departments AS d 
                 ON d.ID = ed.DepartmentID	
-            LEFT JOIN Roles As rl
+            INNER JOIN Roles As rl
                 ON rl.ID = e.RoleID
             WHERE 
                 ( 
@@ -212,14 +221,15 @@ export class WorkersService {
                     OR e.[MidName] LIKE ('%${query}%')
                     OR e.[LastName] LIKE ('%${query}%')
                     OR e.[LastName] LIKE ('%${query}%')
-                    OR  d.[Name] LIKE ('%${query}%')
+                    OR d.[Name] LIKE ('%${query}%')
                     OR rl.[Name] LIKE ('%${query}%')
-                ) AND FORMAT(e.[Birthday], 'MM-dd')  BETWEEN  FORMAT(CONVERT(datetime, '${dates[0]}'), 'MM-dd') AND  FORMAT(CONVERT(datetime, '${dates[1]}'), 'MM-dd')
-            ORDER BY d.[Name], LastName
+                )
+            ${dateStr}
+            ${orderStr}
         `)).map(el => {
         return {
             ...el,
-            full_name: el.Name + " " + el.MidName + " " + el.LastName,
+            full_name: el.LastName + " " + el.Name + " " + el.MidName,
             department_name: el.DepartamentName,
             role_name: el.RoleName
          }
@@ -266,10 +276,10 @@ export class WorkersService {
         // })
         // el.Roles = el.Roles.slice(0,el.Roles.length - 1);
         
-        let date = new Date(el.EmploymentDate);
-        el.EmploymentDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2,'0')}-${(date.getDay() + 1).toString().padStart(2,'0')}`;
-        date = new Date(el.Birthday);
-        el.Birthday = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2,'0')}-${(date.getDay() + 1).toString().padStart(2,'0')}`;
+        const datee = new Date(el.EmploymentDate);
+        el.EmploymentDate = `${datee.getFullYear()}-${(datee.getMonth() + 1).toString().padStart(2,'0')}-${(datee.getDate()).toString().padStart(2,'0')}`;
+        const dateb = new Date(el.Birthday);
+        el.Birthday = `${dateb.getFullYear()}-${(dateb.getMonth() + 1).toString().padStart(2,'0')}-${(dateb.getDate()).toString().padStart(2,'0')}`;
         
         return el;
     })
