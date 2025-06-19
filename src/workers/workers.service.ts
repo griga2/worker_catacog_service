@@ -125,6 +125,7 @@ export class WorkersService {
                 // если имена равны
                 return 0;
             })
+            el.Contacs = this.mapContacts(el.Contacs)
             // const roles = el.Roles;
             // console.log(roles)
             // el.Roles =  roles.split(';').map(elc => {
@@ -204,6 +205,7 @@ export class WorkersService {
                 ,e.[City]
                 ,e.[Sex]
                 ,d.[Name] AS DepartamentName
+                ,d.[ID] AS DepartamentID
                 ,rl.[Name] AS RoleName
                 ,e.[BirthdayString]
                 ,(SELECT convert(nvarchar(36), id) + ':' + Type + ':' + value + ';' FROM [dbo].Contacts WHERE [EmployeeID] = e.ID ORDER BY [Type] FOR XML PATH('')) AS Contacs
@@ -231,7 +233,10 @@ export class WorkersService {
             ...el,
             full_name: el.LastName + " " + el.Name + " " + el.MidName,
             department_name: el.DepartamentName,
-            role_name: el.RoleName
+            departament_id: el.DepartamentID,
+            role: {
+                name: el.RoleName
+            }
          }
     })
 
@@ -264,7 +269,7 @@ export class WorkersService {
             // если имена равны
             return 0;
         })
-
+        el.Contacs = this.mapContacts(el.Contacs)
         // const roles = el.Roles;
         // console.log(roles)
         // el.Roles =  roles.split(';').map(elc => {
@@ -581,6 +586,21 @@ export class WorkersService {
 
         }
     }
+
+    mapContacts(roles) {
+        console.log((roles),'contacts')
+        const ma = Array.from(
+         roles.reduce((map, item) => {
+            if (!map.has(item[2])) {
+              map.set(item[2], item);
+            }
+            return map;
+          }, new Map())
+          .values()
+      );
+      return ma
+    }
+    
 }
 
     // async s3_upload(file, name,  mimetype) {
