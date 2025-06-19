@@ -15,6 +15,53 @@ import * as AWS from 'aws-sdk';
 import e from 'express';
 @Injectable()
 export class WorkersService {
+    async getCatalogInfo(company: string) {
+        let branches = (await this.departmensRepository.find(
+            {
+                where: {
+                    id:company
+                },
+                relations:{
+                },
+                
+            },
+        )).map(el => {return {
+            id: el.id,
+            name: el.name,
+            chief_id: el.chief_id,
+            adress: el.address,
+            father_id: el.father_id,
+            is_open: true,  
+            children:[],
+            have_children: false,
+            orderNum: el.orderNum,
+            timeOffset: el.timeOffset,
+            сity: el.сity,
+            MonFriday: el.monFriday || false,
+            Saturday: el.saturday || false,
+            Sunday: el.sunday || false,
+            sundayClosing: el.sundayClosing,
+            sundayOpenning: el.sundayOpenning,
+            saturdayClosing: el.saturdayClosing,
+            saturdayOpenning: el.saturdayOpenning,
+            monFridayClosing: el.monFridayClosing,
+            monFridayOpenning: el.monFridayOpenning,
+            isOfficeDepartment: el.isOfficeDepartment,
+            isOfficePurchase: el.isOfficePurchase,
+            isStorage: el.isStorage,
+            database_vesta: el.database_vesta,
+            email: el.email,
+            oid: el.oid,
+            sql_server_vesta: el.sql_server_vesta,
+            cfo: el.cfo_vest,
+            id_vesta: el.id_vesta,
+            different: el.sundayOpenning == el.saturdayOpenning && el.sundayClosing == el.saturdayClosing,
+            close_on_holiday: !el.saturday && !el.sunday,
+            edit_time: false,
+        }});
+
+        return branches[0];
+    }
     async updateUserRole(userId: any, role: any) {
         return await this.EmployersRepository.update({id:userId}, {role: role})
     }

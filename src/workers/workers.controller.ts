@@ -17,6 +17,12 @@ export class WorkersController {
         return await this.workerService.getEmployers(company);
     }
 
+    @Get('/branch')
+    async getCatalogInfo(@Query('branch') company: string) {
+        console.log(company);
+        return await this.workerService.getCatalogInfo(company);
+    }
+
     @Get('/search')
     async getCatalog(@Query('text') company: string, @Query('date') date: string) {
         console.log(date)
