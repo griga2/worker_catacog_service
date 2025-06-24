@@ -23,6 +23,12 @@ export class WorkersController {
         return await this.workerService.getCatalogInfo(company);
     }
 
+    @Post('/add_user')
+    async addUser(@Body() body) {
+        console.log(body);
+        return await this.workerService.addUser(body);
+    }
+
     @Get('/search')
     async getCatalog(@Query('text') company: string, @Query('date') date: string) {
         console.log(date)

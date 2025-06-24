@@ -15,6 +15,11 @@ import * as AWS from 'aws-sdk';
 import e from 'express';
 @Injectable()
 export class WorkersService {
+    addUser(body: any) {
+        this.EmployersRepository.insert({
+            
+        })
+    }
     async getCatalogInfo(company: string) {
         let branches = (await this.departmensRepository.find(
             {
@@ -139,7 +144,7 @@ export class WorkersService {
                     name: el.RoleName,
                     id: el.RoleId,
                     can_edit: el.CanEditSprav,
-                }
+                },
              }
         })
 
@@ -269,9 +274,7 @@ export class WorkersService {
                     e.[Name] LIKE ('%${query}%')
                     OR e.[MidName] LIKE ('%${query}%')
                     OR e.[LastName] LIKE ('%${query}%')
-                    OR e.[LastName] LIKE ('%${query}%')
-                    OR d.[Name] LIKE ('%${query}%')
-                    OR rl.[Name] LIKE ('%${query}%')
+                    OR (SELECT convert(nvarchar(36), id) + ':' + Type + ':' + value + ';' FROM [dbo].Contacts WHERE [EmployeeID] = e.ID ORDER BY [Type] FOR XML PATH('')) LIKE ('%${query}%')
                 )
             ${dateStr}
             ${orderStr}
