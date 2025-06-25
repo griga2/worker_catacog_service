@@ -15,11 +15,25 @@ import * as AWS from 'aws-sdk';
 import e from 'express';
 @Injectable()
 export class WorkersService {
-    addUser(body: any) {
-        this.EmployersRepository.insert({
-            
-        })
+    async addUser(body: any) {
+        return await this.EmployersRepository.query(`
+            INSERT INTO Employees (
+            Name
+            )
+            VALUES (
+                'Новый Сотрудник'
+            )
+
+            INSERT INTO EmpToDepIndex (
+                DepartmentID
+                ,EmployeeID
+            ) VALUES (
+                '${body.departament}'
+                ,'${}'
+            )
+        `)
     }
+
     async getCatalogInfo(company: string) {
         let branches = (await this.departmensRepository.find(
             {
@@ -67,6 +81,7 @@ export class WorkersService {
 
         return branches[0];
     }
+
     async updateUserRole(userId: any, role: any) {
         return await this.EmployersRepository.update({id:userId}, {role: role})
     }
@@ -77,12 +92,14 @@ export class WorkersService {
     }
 
     async UpdateUserPhotoUrl(rez: AWS.S3.ManagedUpload.SendData, employerId) {
-        console.log(rez.Location.replace('https://136703eb-05e89941-0f10-4e65-b543-d67d43f62dea.s3.timeweb.cloud',''));
-        await this.EmployersRepository.update({id: employerId}, {photo: rez.Location.replace('https://136703eb-05e89941-0f10-4e65-b543-d67d43f62dea.s3.timeweb.cloud','')});
+        console.log(rez.Location,'');
+        console.log(rez.Location.replace('https://136703eb-05e89941-0f10-4e65-b543-d67d43f62dea.s3.timeweb.cloud',employerId));
+        const reze = await this.EmployersRepository.update({id: employerId}, {photo: rez.Location.replace('https://136703eb-05e89941-0f10-4e65-b543-d67d43f62dea.s3.timeweb.cloud','').trim()});
+        console.log(reze);
         const r = await this.EmployersRepository.findOne({where:{id: employerId}})
 
         return {
-            Photo: r.photo,
+            Photo: r.photo.trim(),
         }
     }
 
@@ -140,6 +157,7 @@ export class WorkersService {
                 ...el,
                 full_name:   el.LastName + " " +  el.Name + " " + el.MidName ,
                 department_name: el.DepartamentName,
+                Photo: el.Photo?.trim(),
                 role: { 
                     name: el.RoleName,
                     id: el.RoleId,
@@ -284,6 +302,7 @@ export class WorkersService {
             full_name: el.LastName + " " + el.Name + " " + el.MidName,
             department_name: el.DepartamentName,
             departament_id: el.DepartamentID,
+            Photo: el.Photo?.trim(),
             role: {
                 name: el.RoleName
             }
@@ -471,7 +490,7 @@ export class WorkersService {
             second_name: body.second_name,
             birthday: body.birthday,
             status: body.status,
-            photo: body.photo,
+            photo: body.photo.trim(),
             sex: body.sex,
             city: body.city
         }
@@ -579,8 +598,10 @@ export class WorkersService {
     }
 
     async moveRoles(role, axis) {
-        await this.rolesRepository.update({id:role.id},{index: axis == 'up'? role.index++ : role.index--});
-        return await this.rolesRepository.find({order:{index:1}});
+        const rl = await this.rolesRepository.findOne({where:{id:role}})
+        console.log(rl);
+        await this.rolesRepository.update({id:role},{index: axis == 'up'? rl.index + 1 : rl.index - 1});
+        return await this.rolesRepository.find({order:{index:-1,name: 1}});
     }
 
     AWS_S3_BUCKET = '136703eb-05e89941-0f10-4e65-b543-d67d43f62dea';
@@ -638,7 +659,7 @@ export class WorkersService {
     }
 
     mapContacts(roles) {
-        console.log((roles),'contacts')
+        // console.log((roles),'contacts')
         const ma = Array.from(
          roles.reduce((map, item) => {
             if (!map.has(item[2])) {

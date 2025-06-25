@@ -25,7 +25,7 @@ export class WorkersController {
 
     @Post('/add_user')
     async addUser(@Body() body) {
-        console.log(body);
+        console.log(body,'add user');
         return await this.workerService.addUser(body);
     }
 
@@ -66,8 +66,9 @@ export class WorkersController {
     }
 
     @Put('/move_role')
-    async moveRoles(@Query('role') role, @Query('axis') axis) {
-       return this.moveRoles(role, axis);
+    async moveRoles(@Body() body) {
+        console.log(body)
+        return this.workerService.moveRoles(body.role, body.axis);
     }
 
     @Put('/contact') 
@@ -104,5 +105,5 @@ export class WorkersController {
     @Delete('/userRole')
     async updateUserRole(@Query('userId') userId, @Body() body) {
         return await this.workerService.updateUserRole(userId, body.role);
-    }с
+    }
 }
