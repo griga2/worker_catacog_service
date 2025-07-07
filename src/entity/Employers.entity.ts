@@ -43,4 +43,7 @@ export class Employer {
 
     @Column({ name: 'Login',})
     login?: string;
+
+    @Column({ name: 'Bio',})
+    bio?: string;
 }

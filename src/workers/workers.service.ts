@@ -13,23 +13,57 @@ import { Contact } from 'src/entity/Contacts.entity';
 import { Photo } from 'src/entity/Photo.entity';
 import * as AWS from 'aws-sdk';
 import e from 'express';
+import axios, { RawAxiosRequestHeaders, AxiosRequestConfig } from 'axios';
 @Injectable()
 export class WorkersService {
+    async updateUserBio(bio: any, userId: any) {
+        return await this.EmployersRepository.update({id:userId},{bio: bio})
+    }
+
+    bitrixUrls = {
+            fistday:"rest/2240/yc94bzed628o2vvq/crm.item.add",
+            empluy: "rest/2240/yc94bzed628o2vvq/crm.item.add",
+            remove: "rest/2240/yc94bzed628o2vvq/crm.item.add"
+        } 
+    
+
+    hiringEmployer(ID: any, roleID, hrMail) {
+        const d = new Date();
+        this.createStreamRediWorkCreate({
+            entityTypeId: '1116',
+            fields: {
+                ufCrm54SpravId:ID,
+                ufCrm54UserFunctions: "",
+                ufCrm54VestaBase: "",
+                ufCrm54RoleAnalog: roleID,
+                ufCrm54EmploymentDate: d.toISOString(),
+                ufCrm54HrEmail: hrMail
+            }
+        })
+    }
+
+
     async addUser(body: any) {
         return await this.EmployersRepository.query(`
+            DECLARE @IDEmp uniqueidentifier = NEWID();
+
             INSERT INTO Employees (
+            ID,
             Name
             )
             VALUES (
+                @IDEmp,
                 'Новый Сотрудник'
             )
+
+            SELECT @IDEmp AS NewID
 
             INSERT INTO EmpToDepIndex (
                 DepartmentID
                 ,EmployeeID
             ) VALUES (
                 '${body.departament}'
-                ,''
+                ,@IDEmp
             )
         `)
     }
@@ -122,7 +156,7 @@ export class WorkersService {
     }
 
     async getEmployers(company) {
-        console.log('awd')
+        console.log(' emp awd')
         const rez =  (await this.dataSource.query(`
                 SELECT e.[ID]
                     ,e.[LastName]
@@ -158,11 +192,10 @@ export class WorkersService {
                 full_name:   el.LastName + " " +  el.Name + " " + el.MidName ,
                 department_name: el.DepartamentName,
                 Photo: el.Photo?.trim(),
-                role: { 
+                    role: el.RoleId ? {
                     name: el.RoleName,
-                    id: el.RoleId,
-                    can_edit: el.CanEditSprav,
-                },
+                    id: el.RoleId
+                } : null
              }
         })
 
@@ -256,7 +289,7 @@ export class WorkersService {
         if (dates == null) {
             orderStr = "ORDER BY d.[Name], e.LastName ";
         } else {
-            console.log('awd')
+            console.log('search awd')
             orderStr = "ORDER BY MONTH(e.[Birthday]), DAY(e.[Birthday]);"
             dateStr = `AND FORMAT(e.[Birthday], 'MM-dd')  BETWEEN  FORMAT(CONVERT(datetime, '${dates[0]}'), 'MM-dd') AND  FORMAT(CONVERT(datetime, '${dates[1]}'), 'MM-dd')`
         }
@@ -303,9 +336,10 @@ export class WorkersService {
             department_name: el.DepartamentName,
             departament_id: el.DepartamentID,
             Photo: el.Photo?.trim(),
-            role: {
-                name: el.RoleName
-            }
+            role: el.RoleId ? {
+                name: el.RoleName,
+                id: el.RoleId
+            } : null
          }
     })
 
@@ -490,9 +524,10 @@ export class WorkersService {
             second_name: body.second_name,
             birthday: body.birthday,
             status: body.status,
-            photo: body.photo.trim(),
+            photo: body.photo?.trim(),
             sex: body.sex,
-            city: body.city
+            city: body.city,
+
         }
         console.log(body)
         console.log(userId)
@@ -672,82 +707,63 @@ export class WorkersService {
       return ma
     }
     
+    async createStreamRediWorkCreate(data) {
+        console.log(data,'createStreamRediWorkCreate')
+        this.RequesNahyi(data)
+    }
+
+    async createStreamRemoveWorker(data) {
+        console.log(data,'createStreamRemoveWorker')
+        this.RequesNahyi(data);
+    }
+
+    async createStreamPerevodNah(data) {
+        console.log(data,'createStreamPerevodNah')
+
+        this.RequesNahyi(data);
+    }
+
+    async createStreamFirstDay(data: { entityTypeId: string; fields: { ufCrm54SpravId: any; ufCrm54UserFunctions: string; ufCrm54VestaBase: string; ufCrm54RoleAnalog: any; ufCrm54EmploymentDate: string; ufCrm54HrEmail: any; }; }) {
+        console.log(data,'createStreamFirstDay')
+        
+        this.RequesNahyi(data);
+    }
+
+    async addRole() {
+        return await this.rolesRepository.insert({name:'Новая роль', index:0 })
+    }
+
+     async updateRole(id,name) {
+        return await this.rolesRepository.update({id: id},{name:name })
+    }
+
+
+    async RequesNahyi(data) {
+        const responce = await axios.request(this.GetConfig(data));
+        const responceData = JSON.stringify(responce.data);
+        const status = JSON.stringify(responce.status);
+        return responce;
+    }
+
+    GetConfig(data) {
+        // console.log(this.configService.get('KUBE_API'));
+
+        // const url = this.configService.get('KUBE_API');
+        const headers: RawAxiosRequestHeaders = {
+        maxBodyLength: Infinity,
+        'Content-Type': 'application/json',
+        };
+        const config: AxiosRequestConfig = {
+        method: 'post',
+        maxBodyLength: Infinity,
+        url: 'https://eks.bitrix24.ru/' + this.bitrixUrls.empluy,
+        headers: headers,
+        data: data,
+        };
+
+        // console.log(data)
+
+        return config;
+    }
+
 }
-
-    // async s3_upload(file, name,  mimetype) {
-    //     const params = {
-    //         Bucket: bucket,
-    //         Key: String(name),
-    //         Body: file,
-    //         ACL: "public-read",
-    //         ContentDisposition: "inline",
-    //         ContentType: mimetype,
-    //         CreateBucketConfiguration:
-    //         {
-    //             LocationConstraint: process.env.YA_S3_LOCATION
-    //         }
-    //     };
-    
-    //     const clienttext =  new AWS.S3({
-    //         endpoint: 'http://localhost:8000',
-    //         accessKeyId: 'accessKey1',
-    //         secretAccessKey: 'verySecretKey1',
-    //         s3ForcePathStyle: true,
-    //         signatureVersion: 'v4',
-    //     });
-        
-        
-    //     const  client  =  new  AWS.S3 (
-    //         {
-    //             endpoint: 'http://91.210.169.241:9000/',
-    //             accessKeyId: 'myshops3',
-    //             secretAccessKey: 'myshops3hardpass',
-    //             s3ForcePathStyle: true,
-    //             signatureVersion: 'v4',
-    //         }
-    //     )
-        
-    //     var bucketParams = {
-    //         Bucket:'botimage',
-    //       };
-        
-        
-    //     console.log('start find backet')
-    //     client.listBuckets(function (err, data) {
-    //         console.log('list bucket')
-    //         if (err) {
-    //         console.log("Error", err);
-    //         } else {
-    //         console.log("Success", data.Buckets);
-    //         if (!data.Buckets.includes('botimage')) {
-    //             client.createBucket(bucketParams, function (err, data) {
-    //                 if (err) {
-    //                     console.log("Error", err);
-    //                 } else {
-    //                     console.log("Success", data.Location);
-    //                 }
-    //             });
-    //         }
-    //         }
-    //     });
-          
-        
-    //     export const SaveImage = async(file,articul) => {
-    //         console.log('start upload image')
-        
-    //         try {
-                
-    //             // console.log(file);
-    //             let image = await Jimp.read(file);
-    //             image.quality(50);
-    //             const buffer = await image.getBufferAsync(Jimp.MIME_JPEG);
-    //             const resp = await s3_upload(buffer,'vtyhay' + articul + '.jpeg',Jimp.MIME_JPEG);
-    //             // await Product.findOneAndUpdate({articul:articul}, {$set:{image_path: `${articul}.png`}});
-    //             return resp;
-    //         } catch (error) {
-    //            console.log(error);
-    //         }
-    //     }
-        
-    //     const bucket = 'image';
-

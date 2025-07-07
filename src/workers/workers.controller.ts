@@ -1,16 +1,19 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { UploadBodyDto } from './dto/workers.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { WorkersService } from './workers.service';
 import * as mongoose from 'mongoose'
 import { FileInterceptor } from '@nestjs/platform-express/multer/interceptors/file.interceptor';
+import axios, { AxiosRequestConfig, RawAxiosRequestHeaders } from 'axios';
+import { query } from 'express';
 
 @Controller('catalog')
 export class WorkersController {
 
     constructor (private readonly workerService: WorkersService) {}
 
+    
     @Get('/')
     async getUsers(@Query('branch') company: string) {
         console.log(company)
@@ -27,6 +30,11 @@ export class WorkersController {
     async addUser(@Body() body) {
         console.log(body,'add user');
         return await this.workerService.addUser(body);
+    }
+
+    @Post('/hiring_employer')
+    async hiringEmployer(@Body() body) {
+        return this.workerService.hiringEmployer(body.ID, body.roleID, body.hrMail)
     }
 
     @Get('/search')
@@ -105,5 +113,21 @@ export class WorkersController {
     @Delete('/userRole')
     async updateUserRole(@Query('userId') userId, @Body() body) {
         return await this.workerService.updateUserRole(userId, body.role);
+    }
+
+    @Put('/updateBio')
+    async updateUserBio(@Body() body) {
+        console.log(body,' updateUserBio')
+        return await this.workerService.updateUserBio(body.bio,body.userId)
+    }
+
+    @Post('/addRole')
+    async addRole(@Body() body) {
+        return await this.workerService.addRole();
+    }
+    
+    @Post('/updateRole')
+    async updateRole(@Body() body) {
+        return await this.workerService.updateRole(body.id,body.name);
     }
 }
