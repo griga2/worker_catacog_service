@@ -175,6 +175,10 @@ export class WorkersService {
                     ,rl.[Id] AS RoleId
                     ,rl.[CanEditSprav] AS CanEditSprav
                     ,e.[BirthdayString]
+                    ,e.[OnLeave]
+                    ,e.[LeaveStart]
+                    ,e.[LeaveFinish]
+                    ,e.[LeaveText]
                     ,(SELECT convert(nvarchar(36), id) + ':' + Type + ':' + Value + ';' FROM [dbo].Contacts WHERE [EmployeeID] = e.ID ORDER BY [Type] FOR XML PATH('')) AS Contacs
                 	,(SELECT convert(nvarchar(36), ID) + ':' + Name + ';' FROM [dbo].Roles WHERE [ID] = e.RoleID FOR XML PATH('')) AS Roles
                 FROM [dbo].[Employees] AS e
@@ -195,7 +199,9 @@ export class WorkersService {
                     role: el.RoleId ? {
                     name: el.RoleName,
                     id: el.RoleId
-                } : null
+                } : null,
+                LeaveStart: el.LeaveStart?.toISOString()?.split('T')[0],
+                LeaveFinish: el.LeaveFinish?.toISOString()?.split('T')[0],
              }
         })
 
@@ -311,6 +317,10 @@ export class WorkersService {
                 ,d.[ID] AS DepartamentID
                 ,rl.[Name] AS RoleName
                 ,e.[BirthdayString]
+                ,e.[OnLeave]
+                ,e.[LeaveStart]
+                ,e.[LeaveFinish]
+                ,e.[LeaveText]
                 ,(SELECT convert(nvarchar(36), id) + ':' + Type + ':' + value + ';' FROM [dbo].Contacts WHERE [EmployeeID] = e.ID ORDER BY [Type] FOR XML PATH('')) AS Contacs
                 ,(SELECT convert(nvarchar(36), rl.ID) + ':' + rl.Name + ';' FROM [dbo].Roles AS rl WHERE [ID] = e.RoleID FOR XML PATH('')) AS Roles
             FROM [dbo].[Employees] AS e
@@ -339,7 +349,10 @@ export class WorkersService {
             role: el.RoleId ? {
                 name: el.RoleName,
                 id: el.RoleId
-            } : null
+            } : null,
+            LeaveStart: el.LeaveStart?.toISOString()?.split('T')[0],
+            LeaveFinish: el.LeaveFinish?.toISOString()?.split('T')[0],
+            LeaveText: el.LeaveText.trim()
          }
     })
 
@@ -527,7 +540,10 @@ export class WorkersService {
             photo: body.photo?.trim(),
             sex: body.sex,
             city: body.city,
-
+            onLeave: body.on_leave,
+            leave_start: body.leave_start,
+            leave_finish: body.leave_finish,
+            leave_text: body.leave_text,
         }
         console.log(body)
         console.log(userId)

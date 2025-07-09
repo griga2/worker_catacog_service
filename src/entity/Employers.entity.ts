@@ -2,6 +2,7 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGene
 import { Role } from './Roles.entity';
 import { Contact } from './Contacts.entity';
 import { Department } from './Departments.entity';
+import { bool } from 'aws-sdk/clients/signer';
 
 @Entity('Employees') //This maps the notes entity to the 'notes' table in your DB
 export class Employer {
@@ -46,4 +47,19 @@ export class Employer {
 
     @Column({ name: 'Bio',})
     bio?: string;
+
+    @Column({ name: "OnLeave"})
+    onLeave?: boolean;
+
+    @Column({ name: "Role"})
+    role?: string;
+
+    @Column({ name: "LeaveText"})
+    leave_text?: string;
+
+    @Column({ name: "LeaveStart"})
+    leave_start?: string;
+
+     @Column({ name: "LeaveFinish"})
+    leave_finish?: string;
 }
