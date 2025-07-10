@@ -16,8 +16,8 @@ import e from 'express';
 import axios, { RawAxiosRequestHeaders, AxiosRequestConfig } from 'axios';
 @Injectable()
 export class WorkersService {
-    async updateUserBio(bio: any, userId: any) {
-        return await this.EmployersRepository.update({id:userId},{bio: bio})
+    async updateUserBio(bio: any, status, userId: any) {
+        return await this.EmployersRepository.update({id:userId},{bio: bio, status: status})
     }
 
     bitrixUrls = {

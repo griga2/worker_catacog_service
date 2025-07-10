@@ -118,7 +118,7 @@ export class WorkersController {
     @Put('/updateBio')
     async updateUserBio(@Body() body) {
         console.log(body,' updateUserBio')
-        return await this.workerService.updateUserBio(body.bio,body.userId)
+        return await this.workerService.updateUserBio(body.bio, body.status, body.userId)
     }
 
     @Post('/addRole')
