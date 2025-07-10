@@ -16,8 +16,8 @@ import e from 'express';
 import axios, { RawAxiosRequestHeaders, AxiosRequestConfig } from 'axios';
 @Injectable()
 export class WorkersService {
-    async updateUserBio(bio: any, status, userId: any) {
-        return await this.EmployersRepository.update({id:userId},{bio: bio, status: status})
+    async updateUserBio(bio: any, userId: any) {
+        return await this.EmployersRepository.update({id:userId},{bio: bio})
     }
 
     bitrixUrls = {
@@ -179,6 +179,7 @@ export class WorkersService {
                     ,e.[LeaveStart]
                     ,e.[LeaveFinish]
                     ,e.[LeaveText]
+                    ,e.[Bio]
                     ,(SELECT convert(nvarchar(36), id) + ':' + Type + ':' + Value + ';' FROM [dbo].Contacts WHERE [EmployeeID] = e.ID ORDER BY [Type] FOR XML PATH('')) AS Contacs
                 	,(SELECT convert(nvarchar(36), ID) + ':' + Name + ';' FROM [dbo].Roles WHERE [ID] = e.RoleID FOR XML PATH('')) AS Roles
                 FROM [dbo].[Employees] AS e
@@ -313,6 +314,7 @@ export class WorkersService {
                 ,e.[Photo]
                 ,e.[City]
                 ,e.[Sex]
+                ,e.[Bio]
                 ,d.[Name] AS DepartamentName
                 ,d.[ID] AS DepartamentID
                 ,rl.[Name] AS RoleName
@@ -544,6 +546,7 @@ export class WorkersService {
             leave_start: body.leave_start,
             leave_finish: body.leave_finish,
             leave_text: body.leave_text,
+            bio: body.bit,
         }
         console.log(body)
         console.log(userId)

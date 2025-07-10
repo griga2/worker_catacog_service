@@ -33,6 +33,7 @@ export class AuthService {
         em.Name,
         em.LastName,
         em.MidName,
+        em.Bio as Bio
         ct.Value
       FROM [SpravApp].[dbo].Contacts as ct
       LEFT JOIN Employees AS em
@@ -69,6 +70,7 @@ export class AuthService {
       em.MidName,
       ct.Value,
       rl.Name as RoleName,
+      em.Bio as Bio
       rl.ID as roleID
     FROM [SpravApp].[dbo].Contacts as ct
     LEFT JOIN Employees AS em
