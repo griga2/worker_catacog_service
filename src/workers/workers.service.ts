@@ -137,7 +137,7 @@ export class WorkersService {
         }
     }
 
-    MainContactTypes = ['workPhone','mPhone','email']
+    MainContactTypes = ['workPhone','mPhone','email', 'mPhone']
     
     constructor(
         @InjectRepository(Employer)
@@ -190,7 +190,7 @@ export class WorkersService {
                 LEFT JOIN Roles As rl
                     ON rl.ID = e.RoleID
                 WHERE ed.DepartmentID = '${company}'
-                ORDER BY d.[Name], LastName
+                ORDER BY d.[Name], LastName, rl.[Index]
             `)).map(el => {
             return {
                 ...el,
@@ -339,6 +339,7 @@ export class WorkersService {
                     OR e.[LastName] LIKE ('%${query}%')
                     OR (SELECT convert(nvarchar(36), id) + ':' + Type + ':' + value + ';' FROM [dbo].Contacts WHERE [EmployeeID] = e.ID ORDER BY [Type] FOR XML PATH('')) LIKE ('%${query}%')
                 )
+            ORDER BY rl.[Index]
             ${dateStr}
             ${orderStr}
         `)).map(el => {
