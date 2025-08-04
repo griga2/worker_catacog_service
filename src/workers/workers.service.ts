@@ -137,7 +137,7 @@ export class WorkersService {
         }
     }
 
-    MainContactTypes = ['workPhone','mPhone','email', 'mPhone']
+    MainContactTypes = ['workPhone','mPhone','email']
     
     constructor(
         @InjectRepository(Employer)
@@ -222,6 +222,7 @@ export class WorkersService {
             el.Contacs = el.Contacs.slice(0,el.Contacs.length - 1);
             this.MainContactTypes.forEach((elf) => {
                 if (not_have_type.includes(elf)) {
+                    console.log(elf)
                     el.Contacs.push(['', elf,''])
                 }
             })
@@ -250,7 +251,7 @@ export class WorkersService {
             let date = new Date(el.EmploymentDate);
             el.EmploymentDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2,'0')}-${(date.getDay() + 1).toString().padStart(2,'0')}`;
             date = new Date(el.Birthday);
-            el.Birthday = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2,'0')}-${(date.getDay() + 1).toString().padStart(2,'0')}`;
+            el.Birthday = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2,'0')}-${(date.getDate() ).toString().padStart(2,'0')}`;
             
             return el;
         })
