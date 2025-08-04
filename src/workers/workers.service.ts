@@ -249,7 +249,7 @@ export class WorkersService {
             // el.Roles = el.Roles.slice(0,el.Roles.length - 1);
             
             let date = new Date(el.EmploymentDate);
-            el.EmploymentDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2,'0')}-${(date.getDay() + 1).toString().padStart(2,'0')}`;
+            el.EmploymentDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2,'0')}-${(date.getDate() + 1).toString().padStart(2,'0')}`;
             date = new Date(el.Birthday);
             el.Birthday = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2,'0')}-${(date.getDate() ).toString().padStart(2,'0')}`;
             
