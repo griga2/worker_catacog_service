@@ -249,7 +249,7 @@ export class WorkersService {
             // el.Roles = el.Roles.slice(0,el.Roles.length - 1);
             
             let date = new Date(el.EmploymentDate);
-            el.EmploymentDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2,'0')}-${(date.getDate() + 1).toString().padStart(2,'0')}`;
+            el.EmploymentDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2,'0')}-${(date.getDay() + 1).toString().padStart(2,'0')}`;
             date = new Date(el.Birthday);
             el.Birthday = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2,'0')}-${(date.getDate() ).toString().padStart(2,'0')}`;
             
@@ -302,7 +302,7 @@ export class WorkersService {
             dateStr = `AND FORMAT(e.[Birthday], 'MM-dd')  BETWEEN  FORMAT(CONVERT(datetime, '${dates[0]}'), 'MM-dd') AND  FORMAT(CONVERT(datetime, '${dates[1]}'), 'MM-dd')`
         }
         
-        const rez =  (await this.dataSource.query(`
+        console.log(`
             SELECT e.[ID]
                 ,e.[LastName]
                 ,e.[Name]
@@ -343,6 +343,48 @@ export class WorkersService {
             ORDER BY rl.[Index]
             ${dateStr}
             ${orderStr}
+        `)
+        const rez =  (await this.dataSource.query(`
+            SELECT e.[ID]
+                ,e.[LastName]
+                ,e.[Name]
+                ,e.[MidName]
+                ,e.[Birthday]
+                ,e.[EmploymentDate]
+                ,e.[Dismissed]
+                ,e.[DismissionDate]
+                ,e.[Status]
+                ,e.[Photo]
+                ,e.[City]
+                ,e.[Sex]
+                ,e.[Bio]
+                ,d.[Name] AS DepartamentName
+                ,d.[ID] AS DepartamentID
+                ,rl.[Name] AS RoleName
+                ,e.[BirthdayString]
+                ,e.[OnLeave]
+                ,e.[LeaveStart]
+                ,e.[LeaveFinish]
+                ,e.[LeaveText]
+                ,(SELECT convert(nvarchar(36), id) + ':' + Type + ':' + value + ';' FROM [dbo].Contacts WHERE [EmployeeID] = e.ID ORDER BY [Type] FOR XML PATH('')) AS Contacs
+                ,(SELECT convert(nvarchar(36), rl.ID) + ':' + rl.Name + ';' FROM [dbo].Roles AS rl WHERE [ID] = e.RoleID FOR XML PATH('')) AS Roles
+            FROM [dbo].[Employees] AS e
+            INNER JOIN EmpToDepIndex AS ed 
+                ON e.ID = ed.EmployeeID 
+            INNER JOIN Departments AS d 
+                ON d.ID = ed.DepartmentID	
+            INNER JOIN Roles As rl
+                ON rl.ID = e.RoleID
+            WHERE 
+                ( 
+                    e.[Name] LIKE ('%${query}%')
+                    OR e.[MidName] LIKE ('%${query}%')
+                    OR e.[LastName] LIKE ('%${query}%')
+                    OR (SELECT convert(nvarchar(36), id) + ':' + Type + ':' + value + ';' FROM [dbo].Contacts WHERE [EmployeeID] = e.ID ORDER BY [Type] FOR XML PATH('')) LIKE ('%${query}%')
+                )
+            
+            ${dateStr}
+            ${orderStr}
         `)).map(el => {
         return {
             ...el,
@@ -356,7 +398,7 @@ export class WorkersService {
             } : null,
             LeaveStart: el.LeaveStart?.toISOString()?.split('T')[0],
             LeaveFinish: el.LeaveFinish?.toISOString()?.split('T')[0],
-            LeaveText: el.LeaveText.trim()
+            LeaveText: el.LeaveText?.trim()
          }
     })
 
